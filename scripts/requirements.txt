@@ -1,0 +1,5 @@
+# Writing Style Engine analysis helpers, version 0.1.0
+# build_corpus_manifest.py, extract_style_features.py, and check_meaning_gate.py use only the Python standard library.
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3

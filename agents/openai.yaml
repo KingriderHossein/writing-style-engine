@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing Style Engine"
+  short_description: "Evidence-grounded Voice, Tone, Style, and Genre control"
+  brand_color: "#4B5563"
