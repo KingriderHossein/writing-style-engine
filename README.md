@@ -6,9 +6,22 @@ The Skill always produces user-facing output in Persian. Research sources may be
 
 ## Current version
 
-`v0.1.0`
+`v0.2.0`
 
-All initial Style/Tone profiles are **Experimental**. No profile is currently Validated or Core.
+All current Style/Tone profiles remain **Experimental** unless `references/validation-status.md` explicitly records a later promotion. Version 0.2.0 changes execution architecture, not empirical validation status.
+
+## Main change in v0.2.0
+
+The Skill now uses a task router instead of forcing the same large workflow for every request:
+
+- **ANALYZE** — inspect existing writing without rewriting it.
+- **RECOMMEND** — propose at least three materially different compatible profiles and explain trade-offs.
+- **DIRECT APPLY** — when the requested style/tone/genre is already clear, apply it directly without first generating three options or exposing a scoring report.
+- **COMPARE** — compare requested alternatives dimension by dimension.
+- **EVALUATE** — score or diagnose supplied text without silently rewriting it.
+- **MANUAL PROFILE** — apply an explicitly selected profile or feature set directly.
+
+This keeps meaning preservation and domain constraints as hard gates while reducing unnecessary output and context use for simple rewrites.
 
 ## Design principles
 
@@ -19,16 +32,7 @@ All initial Style/Tone profiles are **Experimental**. No profile is currently Va
 - Do not create publication-name or living-author imitation profiles.
 - Do not copy English thresholds directly into Persian.
 - Require corpus evidence and human perception testing before profile promotion.
-
-## Modes
-
-### Automatic Mode
-
-Analyze context, propose at least three materially different compatible profiles, explain trade-offs, choose the best option, generate variants when requested, and evaluate them.
-
-### Manual Mode
-
-Apply a user-selected profile while preserving domain constraints and critical meaning.
+- Use the narrowest workflow that satisfies the current writing task.
 
 ## Repository structure
 
@@ -66,25 +70,23 @@ writing-style-engine/
 
 Profiles move through:
 
-`Experimental → Candidate → Validated → Core`
+`Experimental -> Candidate -> Validated -> Core`
 
-Promotion requires explicit corpus, held-out replication, human perception, Persian validation, meaning-preservation checks, and eventually a second independent vertical outside journalism.
+Promotion requires explicit corpus evidence, held-out replication, human perception testing, Persian validation, meaning-preservation checks, and eventually a second independent vertical outside journalism.
 
 See `references/evaluation-framework.md` for exact gates.
 
 ## Corpus plan
 
-The initial media study is designed for 160 texts across Nature, Quanta Magazine, Scientific American, Science News, STAT, Undark, Reuters, and Guardian Science. Sampling is stratified to reduce Topic, Genre, and Length confounding.
-
-The repository does **not** bundle copyrighted full article text.
+The initial media study is designed for 160 texts across multiple English-language science/editorial sources. Sampling is stratified to reduce Topic, Genre, and Length confounding. The repository does **not** bundle copyrighted full article text.
 
 ## Scripts
 
-- `build_corpus_manifest.py` — generate and validate the planned 160-item corpus manifest.
+- `build_corpus_manifest.py` — generate and validate the planned corpus manifest.
 - `extract_style_features.py` — deterministic baseline feature extraction.
 - `cluster_profiles.py` — exploratory clustering after confound control.
 - `check_meaning_gate.py` — deterministic checks for protected facts, identifiers, numbers, and phrases.
 
 ## Important limitation
 
-The software structure and helper scripts have smoke tests, but the full 160-document corpus study, Persian perception study, inter-annotator reliability study, and independent second-vertical validation have not yet been completed. Therefore the current taxonomy must not be described as empirically validated.
+The software structure and helper scripts have smoke tests, but the full corpus study, Persian perception study, inter-annotator reliability study, and independent second-vertical validation have not yet been completed. Therefore the current taxonomy must not be described as empirically validated.
