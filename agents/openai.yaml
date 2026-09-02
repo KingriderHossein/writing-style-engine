@@ -2,3 +2,4 @@ interface:
   display_name: "Writing Style Engine"
   short_description: "Evidence-grounded Voice, Tone, Style, and Genre control"
   brand_color: "#4B5563"
+  default_prompt: "Analyze or transform this text using separate Voice, Tone, Style, and Genre controls while preserving meaning and domain constraints; respond in Persian."
