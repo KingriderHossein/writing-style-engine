@@ -1,11 +1,11 @@
 ---
 name: writing-style-engine
-description: Analyze, recommend, apply, compare, and evaluate writing Voice, Tone, Style, and Genre as separate but interacting layers. Use when ChatGPT must choose an evidence-grounded writing profile, rewrite or generate text in a controlled manner, compare style options, measure observable style features, enforce meaning preservation, or accept domain constraints from another skill. Always produce user-facing output in Persian. Do not treat publication names, author names, or vague adjectives as style profiles; use measurable feature vectors, rhetorical behaviors, provenance, validation status, and explicit evaluation gates.
+description: Analyze, recommend, apply, compare, and evaluate writing Voice, Tone, Style, and Genre as separate but interacting layers. Use when ChatGPT must choose an evidence-grounded writing profile, rewrite or generate text in a controlled manner, compare style options, measure observable style features, enforce meaning preservation, apply Persian/Iranian Writer Palette presets, derive feature-based Persian prose targets from writer references, or accept domain constraints from another skill. Always produce user-facing output in Persian. Do not treat publication names, author names, or vague adjectives as style profiles; use measurable feature vectors, rhetorical behaviors, provenance, validation status, and explicit evaluation gates.
 ---
 
 # Writing Style Engine
 
-Protocol version: 0.2.0
+Protocol version: 0.3.0
 
 Always produce user-facing output in Persian. Keep source titles, identifiers, metric names, and technical terms in their original language when useful.
 
@@ -28,7 +28,7 @@ Use when the user asks which Voice/Tone/Style/Genre profile is appropriate, give
 - Select one recommended option only after checking purpose, audience, channel, Genre, and domain constraints.
 
 ### DIRECT APPLY
-Use when the user asks to rewrite or generate text and already supplies a usable tone, style, genre, profile, or clear communication constraint.
+Use when the user asks to rewrite or generate text and already supplies a usable tone, style, genre, profile, Writer Palette preset, or clear communication constraint.
 
 - Apply the closest compatible profile or feature set directly.
 - Do not force 3 profile proposals or multiple variants.
@@ -36,7 +36,7 @@ Use when the user asks to rewrite or generate text and already supplies a usable
 - Surface evaluation details only when requested or when a material conflict must be explained.
 
 ### COMPARE
-Use when the user asks to compare profiles, drafts, tones, styles, or genres.
+Use when the user asks to compare profiles, drafts, tones, styles, Writer Palette presets, or genres.
 
 - Compare the requested alternatives on separate dimensions.
 - Keep meaning/domain hard gates separate from soft preferences.
@@ -49,7 +49,7 @@ Use when the user asks to score, diagnose, or validate text against a profile or
 - Show hard-gate failures separately from soft quality scores.
 
 ### MANUAL PROFILE
-If the user explicitly selects a profile or feature target, treat it as a direct constraint. Warn only when it conflicts with Genre, domain constraints, meaning preservation, or known validation limits.
+If the user explicitly selects a profile, Writer Palette preset, or feature target, treat it as a direct constraint. Warn only when it conflicts with Genre, domain constraints, meaning preservation, or known validation limits.
 
 ## Core model
 
@@ -61,6 +61,8 @@ Keep these layers separate:
 - **Genre:** communicative form with structural expectations and moves.
 
 Never collapse the four layers into one adjective label. Never infer that a feature validated in English has the same perceptual effect in Persian without Persian validation.
+
+A Writer Palette is not a fifth layer. It is a preset composer over compatible Style features and Persian-specific prose controls. Read `references/iranian-writer-palette.md` when the user asks for Iranian/Persian writer-like prose, an `IW-*` preset, or a named Iranian writer as a stylistic reference.
 
 Read `references/concept-model.md` when layer boundaries are unclear.
 
@@ -78,11 +80,13 @@ Accept free-form requests or a structured handoff. When present, preserve these 
 - `voice_constraints`
 - `tone_target`
 - `style_profile`
+- `writer_palette`
+- `writer_reference`
 - `domain_constraints`
 - `preservation_requirements`
 - `variant_count`
 
-Treat `domain_constraints` and `preservation_requirements` as higher priority than style or engagement preferences. Read `references/domain-constraints-contract.md` for handoffs from science, legal, medical, financial, policy, or other specialist workflows.
+Treat `domain_constraints` and `preservation_requirements` as higher priority than style, Writer Palette, or engagement preferences. Read `references/domain-constraints-contract.md` for handoffs from science, legal, medical, financial, policy, or other specialist workflows.
 
 Interpret `mode: automatic` according to the task router: use RECOMMEND when the profile is not yet chosen; use DIRECT APPLY when the writing target is already clear. Do not make `automatic` synonymous with always generating three options.
 
@@ -93,24 +97,25 @@ Interpret `mode: automatic` according to the task router: use RECOMMEND when the
 3. Identify the intended Genre separately from Voice, Tone, and Style.
 4. For rewrite/transformation tasks, extract protected propositions, numbers, entities, dates, causal relations, modality, negation, scope, and claim strength before changing style.
 5. Load only the feature/profile references needed for the routed task.
-6. If alternatives are requested or RECOMMEND requires them, make them materially different in rhetorical organization, information order, stance, density, sentence/paragraph behavior, or other relevant features. Do not create fake diversity through synonym replacement.
-7. Apply the Meaning Preservation hard gate to rewrite/transformation candidates.
-8. Apply Domain Constraint Compliance as a hard gate when constraints were supplied.
-9. Use `references/evaluation-framework.md` for explicit EVALUATE, COMPARE, or RECOMMEND scoring/ranking and when a material quality conflict must be resolved.
-10. Report validation status and uncertainty whenever a profile claim depends on empirical support. Never promote an unvalidated profile by rhetoric.
+6. If `writer_palette` or `writer_reference` is present, load `references/iranian-writer-palette.md`. Convert writer references into observable, non-identifying feature targets rather than author-name profiles.
+7. If alternatives are requested or RECOMMEND requires them, make them materially different in rhetorical organization, information order, stance, density, sentence/paragraph behavior, Writer Architecture, or other relevant features. Do not create fake diversity through synonym replacement.
+8. Apply the Meaning Preservation hard gate to rewrite/transformation candidates.
+9. Apply Domain Constraint Compliance as a hard gate when constraints were supplied.
+10. Use `references/evaluation-framework.md` for explicit EVALUATE, COMPARE, or RECOMMEND scoring/ranking and when a material quality conflict must be resolved.
+11. Report validation status and uncertainty whenever a profile or writer-derived claim depends on empirical support. Never promote an unvalidated profile or Writer Palette preset by rhetoric.
 
 ## Recommendation output
 
 For RECOMMEND tasks, default to this compact Persian structure:
 
 1. **تحلیل زمینه** — purpose, audience, channel, Genre, constraints.
-2. **گزینه‌های مناسب** — at least 3 materially different profiles with fit rationale and main trade-off.
-3. **انتخاب پیشنهادی** — one profile and why it best fits the current context.
+2. **گزینه‌های مناسب** — at least 3 materially different profiles or Writer Palette presets with fit rationale and main trade-off.
+3. **انتخاب پیشنهادی** — one profile/preset and why it best fits the current context.
 4. **خروجی** — only when generation/rewrite is part of the user's request.
 5. **ارزیابی** — only when comparison/ranking is useful or requested.
 6. **وضعیت شواهد** — Experimental/Candidate/Validated/Core and confidence when a profile claim is made.
 
-Use profile cards from `references/profile-cards.md` only within their stated validation status.
+Use profile cards from `references/profile-cards.md` only within their stated validation status. Treat `IW-*` entries in `references/iranian-writer-palette.md` as Experimental composition presets, not promoted Style Profiles.
 
 ## Direct Apply output
 
@@ -118,9 +123,23 @@ For DIRECT APPLY or MANUAL PROFILE tasks:
 
 - return the requested finished text as the main output;
 - preserve domain and meaning constraints;
+- apply a selected `IW-*` Writer Palette directly when compatible;
 - do not expose internal profile-search or scoring work by default;
 - do not generate variants unless requested;
 - add a brief warning only when the requested style would violate a hard constraint or depends on unsupported validation claims.
+
+## Iranian Writer Palette
+
+Use `references/iranian-writer-palette.md` to control Persian prose architecture without conflating author identity with Style.
+
+Rules:
+
+- Treat named writers as evidence/corpus references, not profile names.
+- If excerpts or a lawful corpus are available, derive observable features before generation.
+- For living writers, do not perform direct imitation; convert the request into a non-identifying feature target and produce independent prose.
+- Do not reproduce signature wording, catchphrases, or distinctive passages.
+- If evidence is absent, mark writer-derived targets Experimental with low confidence rather than inventing traits from reputation.
+- Keep Tone independent. A Writer Palette may shape sentence rhythm, narrator presence, metaphor density, rhetorical questions, paragraph architecture, lexical register, argument density, emotional distance, epistemic caution, and information compression, but it must not silently choose emotional stance for the user.
 
 ## Meaning Preservation hard gate
 
@@ -133,7 +152,7 @@ For rewrite or transformation tasks, fail a candidate if it changes any critical
 - uncertainty, confidence, probability, legal force, or scientific claim strength;
 - scope, conditions, exceptions, or temporal relations.
 
-A failed candidate cannot recover through Style, Engagement, Readability, or Naturalness scores.
+A failed candidate cannot recover through Style, Engagement, Readability, Naturalness, or Writer Palette adherence scores.
 
 Use `scripts/check_meaning_gate.py` for deterministic protected-token checks when local text files are available. Treat semantic metrics as supporting evidence, not sole authority.
 
@@ -146,14 +165,16 @@ Relevant dimensions include:
 - Meaning Preservation — hard gate
 - Domain Constraint Compliance — hard gate when supplied
 - Style Profile Adherence
+- Writer Palette Adherence — when selected
 - Tone Perception Fit
 - Voice Consistency
 - Genre Fit
-- Naturalness
+- Persian Naturalness
 - Readability/Comprehensibility
 - Factual/claim-strength consistency when applicable
 - Engagement — soft criterion only
 - Clickbait/overstatement risk — penalty
+- Overwriting/ornament risk — penalty when prose controls exceed the selected target
 
 Do not use CTR, virality, classifier confidence, LLM-as-judge, BLEU, ROUGE, or any single metric as a universal quality score.
 
@@ -161,15 +182,19 @@ Do not print this full rubric for simple DIRECT APPLY tasks unless the user asks
 
 ## Corpus-backed profile rules
 
-Before promoting a profile, follow `references/corpus-protocol.md`, `references/annotation-protocol.md`, and `references/persian-validation.md`.
+Before promoting a profile or Writer Palette preset, follow `references/corpus-protocol.md`, `references/annotation-protocol.md`, and `references/persian-validation.md`.
 
 Do not call a profile **Core** unless it satisfies the promotion gates in `references/evaluation-framework.md`.
 
 Do not claim the engine is empirically domain-independent until it passes a second vertical independent of journalism.
 
+The `IW-*` Writer Palette presets remain Experimental until a dedicated Persian corpus, confound-controlled analysis, replication, and native-rater perception validation support promotion.
+
 ## Publication and author handling
 
 Use publications, organizations, and authors only as evidence sources or corpus strata. Convert observed patterns into independent features and rhetorical behaviors. Do not create profiles named after a publication or living writer.
+
+For named writer requests, prefer feature-based descriptions and independent prose. A historical/deceased writer may be named in provenance when evidence supports the analysis, but the generated target should still be represented as features rather than a reusable author-name profile.
 
 ## Tool use
 
@@ -188,6 +213,7 @@ Load only what the routed task needs:
 
 - Concept boundaries and architecture: `references/concept-model.md`
 - Feature definitions: `references/style-feature-schema.md`
+- Iranian/Persian Writer Palette presets and named-writer handling: `references/iranian-writer-palette.md`
 - Card schema: `references/tone-card-schema.md`
 - Current profile hypotheses: `references/profile-cards.md`
 - Domain handoff contract: `references/domain-constraints-contract.md`
