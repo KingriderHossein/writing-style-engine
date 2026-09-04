@@ -1,6 +1,6 @@
 # Initial Profile Cards
 
-Schema version: 0.1.0
+Schema version: 0.1.1
 
 These profiles are **Experimental**. They are engineering hypotheses synthesized from professional guidance and the style-transfer literature. They have not completed the required 160-document media corpus validation or Persian perception validation. Do not describe them as validated.
 
@@ -59,6 +59,10 @@ These profiles are **Experimental**. They are engineering hypotheses synthesized
 - Tone vector: formality 1–2, seriousness 1–3, enthusiasm 3, emotional intensity 2, humor 0–2, directness 3, engagement pressure 3.
 - Anti-patterns: false urgency, “you won’t believe”, hidden key fact, superlatives without evidence, emotional manipulation, certainty inflation.
 
+## Writer Palette boundary
+
+The `IW-*` entries in `references/iranian-writer-palette.md` are **composition presets**, not additional Style Profiles in this taxonomy. Do not count them as P07+ profiles and do not promote them by analogy. They require their own Persian corpus and perception evidence while still using the same general promotion gates.
+
 ## Promotion note
 
-Do not create a seventh profile only because a corpus cluster appears once. Require replication, practical distinctness, and perception evidence.
+Do not create a seventh Style Profile only because a corpus cluster appears once. Require replication, practical distinctness, and perception evidence.
